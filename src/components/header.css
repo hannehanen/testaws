@@ -1,0 +1,19 @@
+.linking:hover { 
+    cursor: pointer;;
+  }
+  .linking{
+      color: blue;
+      text-decoration: underline;
+  }
+  .headerIeto{
+      background-color:rgb(170, 170, 170, .6);
+      border-bottom: 2px solid rgb(170, 170, 170, .6);
+      height: 100px;
+  }
+
+  .headerInHeader{
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    margin-left: 35%;
+  }
