@@ -14,13 +14,34 @@ import axios from 'axios';
 class loggedIn extends Component {
     state = {
         oldpsw: "",
-        newpsw: ""
+        newpsw: "",
+        profileInfo: ""
     }
 
     componentDidMount() {
+        console.log("DID MOUNT")
         if (this.props.loggedIn.name) {
             this.props.history.push("/login")
         }
+
+        let token = this.props.IDTOKEN
+
+        var headers = {
+            'Authorization': token,
+            "Content-type": 'application/json'
+        }
+        axios.get("https://d67id48gk0.execute-api.eu-north-1.amazonaws.com/lek/patrik-first-endpoint", { headers: headers }).then(data => {
+            let obj = data.data;
+            this.setState((state) => {
+                return {
+                    ...state,
+                    profileInfo: obj.profileInfo
+                }
+            });
+        }).catch(err => {
+            console.log(err)
+        })
+
     }
 
     changePass = () => {
@@ -43,26 +64,35 @@ class loggedIn extends Component {
         });
 
     }
-    sendData = () =>{
+    sendData = () => {
         let token = this.props.IDTOKEN
-       
+
         var headers = {
             'Authorization': token,
-            "Content-type" : 'application/json'
+            "Content-type": 'application/json'
         }
-        axios.post("https://d67id48gk0.execute-api.eu-north-1.amazonaws.com/lek/patrik-first-endpoint",{'namn':'some random string'},{headers: headers}).then((data) =>{
+        axios.post("https://d67id48gk0.execute-api.eu-north-1.amazonaws.com/lek/patrik-first-endpoint", { 'info': this.state.profileInfo }, { headers: headers }).then((data) => {
             console.log(data)
-        }).catch((err) =>{
+        }).catch((err) => {
             console.log(err)
         })
     }
+    infoChange = (ev) => {
+       
+        let val = ev.target.value;
+        this.setState((state) => {
+            return {
+                ...state,
+                profileInfo: val
+            }
+        })
+    }
     render() {
-        console.log(this.props.loggedIn)
         let usr = this.props.loggedIn
         return (
             <div>
-               <Typography variant="h3" gutterBottom>
-                                Välkommen {usr.username}!
+                <Typography variant="h3" gutterBottom>
+                    Välkommen {usr.username}!
                 </Typography>
                 <Card >
                     <CardActionArea>
@@ -80,7 +110,7 @@ class loggedIn extends Component {
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
-                      {this.state.newpsw.length > 4 && this.state.oldpsw.length >4 ? <button onClick={this.changePass}>Change</button> : null}  
+                        {this.state.newpsw.length > 4 && this.state.oldpsw.length > 4 ? <button onClick={this.changePass}>Change</button> : null}
                     </CardActions>
                 </Card>
                 <Card >
@@ -91,12 +121,12 @@ class loggedIn extends Component {
                                 Profile Info
                             </Typography>
                             <Typography component="p">
-                               <TextField  margin="normal" helperText="Spread the word around" variant="outlined" rowsMax="4" multiline/>
+                                <TextField margin="normal" onChange={this.infoChange} helperText="Spread the word around" variant="outlined" rowsMax="4" multiline value={this.state.profileInfo} />
                             </Typography>
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
-                       <button onClick={this.sendData}>Push me</button>
+                        <button onClick={this.sendData}>Update profileInfo</button>
                     </CardActions>
                 </Card>
 
